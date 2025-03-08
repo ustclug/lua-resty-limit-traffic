@@ -15,5 +15,5 @@ install: all
 	$(INSTALL) lib/resty/limit/*.lua $(DESTDIR)$(LUA_LIB_DIR)/resty/limit/
 
 test: all
-	PATH=$(OPENRESTY_PREFIX)/nginx/sbin:$$PATH prove -I../test-nginx/lib -r t
+	PATH=$(OPENRESTY_PREFIX)/nginx/sbin:$$PATH prove -r t
 
