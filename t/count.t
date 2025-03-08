@@ -148,7 +148,7 @@ rejected
                     local remaining = err
                     ngx.say("remaining: ", remaining)
                 end
-                ngx.sleep(1)
+                ngx.sleep(1.5)
             end
         }
     }
