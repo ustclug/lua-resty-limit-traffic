@@ -38,7 +38,8 @@ local rec_cdata = ffi.new("struct lua_resty_limit_req_rec")
 
 
 local _M = {
-    _VERSION = '0.09'
+    _VERSION = '0.09',
+    _DAY = 86400  -- Use a day for expiriation time when initializing and touching keys
 }
 
 
@@ -81,6 +82,7 @@ function _M.incoming(self, key, commit)
     -- cdata:
     local v = dict:get(key)
     if v then
+        dict:expire(key, self._DAY)
         if type(v) ~= "string" or #v ~= rec_size then
             return nil, "shdict abused by other users"
         end
@@ -108,7 +110,7 @@ function _M.incoming(self, key, commit)
     if commit then
         rec_cdata.excess = excess
         rec_cdata.last = now
-        dict:set(key, ffi_str(rec_cdata, rec_size))
+        dict:set(key, ffi_str(rec_cdata, rec_size), self._DAY)
     end
 
     -- return the delay in seconds, as well as excess
@@ -135,7 +137,7 @@ function _M.uncommit(self, key)
 
     rec_cdata.excess = excess
     rec_cdata.last = rec.last
-    dict:set(key, ffi_str(rec_cdata, rec_size))
+    dict:set(key, ffi_str(rec_cdata, rec_size), self._DAY)
     return true
 end
 

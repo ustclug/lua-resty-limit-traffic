@@ -14,7 +14,8 @@ local assert = assert
 
 
 local _M = {
-    _VERSION = '0.09'
+    _VERSION = '0.09',
+    _DAY = 86400  -- Use a day for expiriation time when initializing and touching keys
 }
 
 
@@ -53,12 +54,14 @@ function _M.incoming(self, key, commit)
     local conn, err
     if commit then
         conn, err = dict:incr(key, 1, 0)
+        dict:expire(key, self._DAY)
         if not conn then
             return nil, err
         end
 
         if conn > max + self.burst then
             conn, err = dict:incr(key, -1)
+            -- key has been touched, so we don't need to update expiration
             if not conn then
                 return nil, err
             end
@@ -67,7 +70,16 @@ function _M.incoming(self, key, commit)
         self.committed = true
 
     else
-        conn = (dict:get(key) or 0) + 1
+        conn = dict:get(key)
+        if conn then
+            dict:expire(key, self._DAY)
+            if conn < 0 then
+                conn = 0
+            end
+        else
+            conn = 0
+        end
+        conn = conn + 1
         if conn > max + self.burst then
             return nil, "rejected"
         end
@@ -93,6 +105,9 @@ function _M.leaving(self, key, req_latency)
     local dict = self.dict
 
     local conn, err = dict:incr(key, -1)
+    if err ~= "not found" then
+        dict:expire(key, self._DAY)
+    end
     if not conn then
         return nil, err
     end
@@ -110,7 +125,11 @@ function _M.uncommit(self, key)
     assert(key)
     local dict = self.dict
 
-    return dict:incr(key, -1)
+    local conn, err = dict:incr(key, -1)
+    if err ~= "not found" then
+        dict:expire(key, self._DAY)
+    end
+    return conn
 end
 
 
