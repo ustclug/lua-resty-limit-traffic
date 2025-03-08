@@ -1,9 +1,0 @@
-2025/03/08 14:30:33 [notice] 3801#3801: using the "epoll" event method
-2025/03/08 14:30:33 [notice] 3801#3801: openresty/1.27.1.1
-2025/03/08 14:30:33 [notice] 3801#3801: OS: Linux 6.8.0-1021-azure
-2025/03/08 14:30:33 [notice] 3801#3801: getrlimit(RLIMIT_NOFILE): 65536:65536
-2025/03/08 14:30:35 [notice] 3802#3802: signal 3 (SIGQUIT) received from 3784, shutting down
-2025/03/08 14:30:35 [notice] 3802#3802: signal 15 (SIGTERM) received from 3784, exiting
-2025/03/08 14:30:35 [info] 3802#3802: epoll_wait() failed (4: Interrupted system call)
-2025/03/08 14:30:35 [notice] 3802#3802: exiting
-2025/03/08 14:30:35 [notice] 3802#3802: exit
