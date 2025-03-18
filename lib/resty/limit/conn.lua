@@ -53,7 +53,7 @@ function _M.incoming(self, key, commit)
 
     local conn, err
     if commit then
-        conn, err = dict:incr(key, 1, 0)
+        conn, err = dict:incr(key, 1, 0, self._DAY)
         dict:expire(key, self._DAY)
         if not conn then
             return nil, err
